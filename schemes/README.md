@@ -22,7 +22,7 @@ In our setup:
 
         and when to stop.
 
-Raspberry Pi GPIO wiring
+Raspberry Pi GPIO wiring(you need to download the docx to see it, the FILE IS NOT EMPTY)
 
 The Raspberry Pi GPIO pins diagram shows the full wiring layout for the robot. It makes it easy to see:
 
