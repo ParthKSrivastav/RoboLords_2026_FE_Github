@@ -1,212 +1,258 @@
-# RoboLords_2026_FE_Github
-Meet Team Robolords
+# RoboLords 2026 Future Engineers
 
-We’re Team Robolords from Maiden Erlegh School, and this repo documents our journey in WRO Future Engineers — from early experiments to the robot we’re taking to the UK finals.
+## Abstract
 
-Our team:
+We’re Team RoboLords from Maiden Erlegh School, competing in WRO 2026 Future Engineers. This repo tells the story of how our robot grew from rough LEGO SPIKE builds into a Raspberry Pi–powered RC truck that can handle both the Open Challenge and the Obstacle Challenge.
 
-    Parth Srivastav – Has competed three times before in WRO RoboMission (Junior and Elementary). He’s into robotics, Raspberry Pi projects, sensors like LiDAR and gyros, and plays the piano.
+Our final robot uses:
 
-    Raphael Peduru – Has previous experience in WRO Future Engineers. He enjoys robotics, acting, piano, and trying out new challenges, from sports to engineering.
+- A Raspberry Pi 4B as the “brain”.
+- Two TF-Luna LiDAR sensors for distance.
+- A Raspberry Pi Camera Module 3 Wide for colour detection.
+- A modified RC truck chassis with steering and drive controlled through a motor controller.
 
-    Jai Kumar Kairamakonda – Year 10 student and UK finals participant, helping develop and refine the robot for competition.
+Over the season we discovered something important: a robot that finishes cleanly every time is worth more than one that’s only fast when everything goes perfectly. Most of our design decisions are about making it reliable, understandable, and reproducible under competition pressure.
 
-We’re all in Year 10, aged 14–15, and this project is the result of several years of learning, testing, and improving our designs.
-What our robot does
+## Team members
 
-Our robot is designed to:
+We’re Year 10 students at Maiden Erlegh School:
 
-    Drive autonomously around the WRO Future Engineers field.
+- **Parth Srivastav**
+- **Raphael Peduru**
 
-    Complete accurate and repeatable laps for the Open Challenge.
+This project builds on our past WRO experience and a lot of hours spent testing, fixing, rebuilding, and improving the robot.
 
-    Detect and react to red and green markers in the Obstacle Challenge.
+## Repository contents
 
-    Park reliably at the end of the run.
+We’ve tried to organise the repo so that someone who isn’t on our team can understand how the robot works:
 
-To do that, we combine:
+- `README.md` – This main overview of the robot, hardware, software, and key decisions.
+- `Engineering Journal.md` – Our journey: what we tried, what broke, and what we changed.
+- `code/round1.py` – Code for the Open Challenge.
+- `code/round2.py` – Code for the Obstacle Challenge, with camera logic and parking.
+- `code/sensors6.py` – Sensor handling and LiDAR helper functions.
+- `schemes/` – Wiring diagrams and Raspberry Pi GPIO pin mapping.
+- `vehicle photos/` – Photos of the robot from front, rear, side, and top.
+- `team photo/` – Photo of the team with the robot.
 
-    Electrical wiring and power distribution.
+***
 
-    Sensor integration (LiDAR, camera, gyro).
+## 1. Mobility and mechanical design
 
-    Vehicle control software.
+### How the chassis evolved
 
-    Circuit design around a Raspberry Pi 4B.
+We started where we were comfortable: LEGO SPIKE. Our first idea was to use two SPIKE hubs to split the work, but in practice the delay between them was too high for a car that has to react quickly to changing obstacles. Even when we dropped to a single hub, we kept hitting problems:
 
-    A modified RC truck chassis for realistic steering and storage.
+- The LEGO body was either too heavy, too fragile, or too flexible.
+- Steering parts wore out or broke faster than we expected.
+- The gyro in that setup wasn’t accurate enough to trust for three clean laps.
 
-We learned quickly that a robot that is consistent is more valuable than one that is just fast. Most of our design decisions are about making the robot reliable and reproducible under competition pressure.
-Brain of the robot: Raspberry Pi 4B
+At that point, we realised we were spending more time fighting the platform than solving the challenge. So we moved to a pre-built RC vehicle. We tried several RC cars, but most were simply too small to fit a Raspberry Pi, motor controller, batteries, and wiring.
 
-At the centre of the system is a Raspberry Pi 4B (8 GB RAM). We chose it because:
+Eventually we found an RC truck that ticked the right boxes:
 
-    It’s powerful enough for computer vision and sensor fusion.
+- A **load bed** at the back that acted like a proper storage bay.
+- A working **Ackermann-style steering** system.
+- Enough space inside to mount the electronics neatly.
 
-    It can talk to LiDAR, gyros, and the motor controller at the same time.
+This truck became the base for later versions of our robot.
 
-    It’s widely used in education, with good documentation and community support.
+### Steering, size and speed
 
-The Pi is powered by a 5000 mAh power bank, which gives us up to about 8 hours of operation, so we don’t have to worry about the robot dying in the middle of testing or a run.
-Sensors and situational awareness
-LiDAR (TF-Luna)
+The first truck body we used was big. It let us fit everything, but the size made tight turns harder and parking more awkward. As we started thinking more seriously about the Obstacle Challenge and parallel parking, this became a real limitation.
 
-We use TF-Luna LiDAR sensors for distance measurement:
+So we shrank the body in a later version:
 
-    Front TF-Luna – Stops frontal collisions and detects walls ahead.
+- The new body is about 5 cm shorter.
+- It still keeps the Ackermann steering and strong drive motor.
 
-    Rear TF-Luna – Added later to improve parking and awareness behind the robot.
+The side-effect of reducing size was that the robot suddenly felt **too fast**. With less weight and the same strong motor, it accelerated quickly and overshot turns. We solved this the simple way: we lowered the drive speed to 0.2 (20%). That single change made our turning and stopping much more predictable.
 
-TF-Luna works on the time-of-flight principle: it sends a light pulse, measures how long it takes to come back, and converts that into distance. We tuned it to send pulses at a high rate so the robot always has a fresh picture of what’s in front and behind.
-Camera
+Inside the truck, we used LEGO blocks to separate the Pi, power bank, and motor controller. It’s not glamorous, but it keeps things from sliding around and made repairs in testing sessions a lot less stressful.
 
-We tested two camera options:
+We also had a rule-related scare at one point. A truck with too many axles looked good but didn’t match the rules, so we had to swap it out. That reminded us that in Future Engineers, **following the rules** is just as important as technical performance.
 
-    DFRobot Huskylens – Attractive because of onboard image processing.
+***
 
-    Raspberry Pi Camera Module 3 Wide – Became our final choice.
+## 2. Power and sensor architecture
 
-Huskylens was powerful, but we had trouble integrating it cleanly with the Pi. The wide Pi camera gave us:
+### The brain and power
 
-    A larger field of view (better awareness for Obstacle Challenge).
+The robot’s brain is a **Raspberry Pi 4B**. We picked it because:
 
-    A clean ribbon cable connection to the Pi.
+- It can handle camera processing and LiDAR at the same time.
+- It has enough GPIO pins for motor control and extra sensors.
+- There’s a lot of documentation and community support if we get stuck.
 
-    Flexibility to use OpenCV and our own colour-detection logic.
+We power the Pi from a power bank, and the motor controller from a separate 9 V battery. Keeping those two supplies separate helps avoid brownouts when the motors draw more current. The Pi and motor controller share a common ground so the control signals are understood correctly.
 
-We briefly tried using Ultralytics for object detection, but installation issues and environment conflicts made it overkill for our needs. In the end we wrote our own colour detection code using OpenCV. It’s lighter, simpler, and accurate enough for detecting the red and green markers we need in Round 2.
-Gyro
+### Sensors we ended up with
 
-We originally used an MPU6050 gyro mounted near the centre of the robot, just behind the camera, to estimate orientation and help with precise turning.
+We experimented with quite a few sensors over the season. The final set is:
 
-However, in practice it kept giving us inconsistent readings. We tried:
+- **Front TF-Luna LiDAR** – Measures distance ahead and helps to avoid walls.
+- **Rear TF-Luna LiDAR** – Added later for better awareness when parking.
+- **Raspberry Pi Camera Module 3 Wide** – Detects red and green pillars in Round 2.
 
-    Kalman filters.
+Along the way we tried:
 
-    PID controllers.
+- An **MPU6050 gyro** in the centre of the robot.
+- Side **ultrasonic sensors**.
 
-    Combinations of both.
+The gyro looked promising, and we tried Kalman filters and PID tuning, but in real runs it kept drifting and gave inconsistent angles. The ultrasonic sensors suffered from loose resistors and unreliable readings, especially when transported and plugged in repeatedly. In the end both were removed from the final design. That was one of the big lessons: if a sensor can’t be trusted in competition conditions, it’s better to remove it than to keep fighting it.
 
-Despite all that, the MPU6050 remained too unstable for reliable three-lap runs, so we eventually removed it from the final design and focused on methods that gave us more predictable behaviour.
-Chassis and mechanical design
+### Where we put everything
 
-We started on LEGO SPIKE Prime, building on our earlier robotics work. While this was familiar, we ran into several problems:
+Sensor placement ended up being just as important as sensor choice:
 
-    Building Ackermann steering with SPIKE parts was difficult.
+- The **front TF-Luna** is low in the front bumper area, with LEGO pieces acting as a protective bumper so the sensor isn’t the first point of impact.
+- The **rear TF-Luna** is low at the rear bumper so it can see the parking area behind the car.
+- The **camera** started lower down near the windshield/hood for aesthetics, but the view was too limited. Moving it onto the roof gave us a much better field of view and more reliable colour detection.
 
-    Steering connectors were fragile and broke often.
+The gyro, when we used it, was mounted close to the centre of the robot to reduce the effect of bumps. Even with that, it still wasn’t reliable enough, which is why it’s not part of the final setup.
 
-    The platform didn’t give us the robustness we needed.
+### Wiring and GPIO map
 
-To solve this, we switched to a remote-controlled truck as our base:
+Our GPIO table maps every Raspberry Pi pin to its job (LiDAR, motor controller, etc.). In our robot:
 
-    We wired its motors to the Raspberry Pi through an L298N motor controller.
+- **GPIO 17, 18, 22, 23** drive the motor controller inputs (IN1–IN4).
+- TF-Luna uses UART and I2C for front and rear readings.
+- The camera uses the Pi’s **ribbon cable camera port**, not GPIO pins, so high-speed video stays separate from sensor lines.
 
-    The truck’s rear storage compartment became a neat space for the Pi, battery, and controller.
+The motor controller wiring diagram shows:
 
-    The design looked more like a real vehicle and less like a prototype with wires everywhere.
+- Motor live and ground going into the controller.
+- The controller’s power coming from its own battery.
+- A shared ground between the Pi and controller for correct signal levels.
 
-We used LEGO blocks inside the truck to separate and secure each unit (Pi, power bank, motor controller), so they stayed in place and didn’t interfere with one another during runs.
+Getting this right stopped a lot of the strange behaviour we saw in early tests.
 
-At one point we used a truck with too many axles, which nearly got us disqualified because it didn’t match the rules. That forced us to change to a smaller mini-truck (our Mark 11/12 versions) and reminded us that rule compliance is as important as performance.
-Sensor placement
+***
 
-Placement matters just as much as choice of sensor:
+## 3. Software architecture and obstacle strategy
 
-    Front TF-Luna is at the bottom of the driver’s cabin for a clear view ahead.
+### How the code is organised
 
-    Rear TF-Luna is placed to see behind the vehicle during parking.
+The software started life as “one big file that does everything”. That was okay for early experiments, but it quickly became hard to read and debug.
 
-    The Pi camera is mounted on top of the cabin to maximise field of view.
+We tried a three-file split (main / sensors / motor), but that introduced some import complexity at the worst time: right before events.
 
-    The gyro (in earlier versions) was placed near the centre to reduce noise from uneven movement.
+The final structure is deliberately simple:
 
-We tested and adjusted positions to reduce blind spots and vibrations. Even a good sensor behaves badly if it’s mounted poorly.
-Software architecture
+- `round1.py` – Open Challenge behaviour (three laps).
+- `round2.py` – Obstacle Challenge behaviour (red/green pillars + parking).
+- `sensors6.py` – Shared sensor classes and helper functions for LiDAR.
 
-Our code went through several iterations.
-Early approach
+This way, if someone wants to understand the Open Challenge, they read `round1.py` and `sensors6.py`. If they want Obstacle Challenge and parking, they read `round2.py` and `sensors6.py`.
 
-At first, everything lived in one big file. This worked for quick experiments, but:
+### Round 1 – Open Challenge logic
 
-    It became hard to read.
+Open Challenge starts by importing sensor support from `sensors6.py`. The core of the program is the `Robot` class, which contains:
 
-    Debugging was slow.
+- `drive_forward`, `move_forward`, `turn_left`, `turn_right`, `stop` and steering-correction functions.
+- `luna_turn`, our turning system, which uses timed movement plus LiDAR checking to make turns more consistent.
 
-    Changing one part risked breaking another.
+On top of that, there’s a lap routine:
 
-Three-file split
+- Move forward a set distance.
+- Turn 90 degrees using `luna_turn`.
+- Repeat this four times for one lap.
+- Repeat laps until three are completed.
 
-We then split into:
+We also use a basic **“coin flip”** idea that turns the robot and checks for walls. If it sees a wall, it chooses the other direction. If it doesn’t, it carries on. This is a simple way to adapt to track layout without hardcoding positions.
 
-    A main file – high-level logic.
+One of the biggest improvements came from reducing speed. At high speed we finished a run much faster, but the robot was inconsistent and hard to reproduce. Slowing down and accepting a slightly longer run gave us much cleaner three-lap behaviour.
 
-    A sensor file – all sensor code (camera, LiDAR, gyro).
+### Round 2 – Obstacle Challenge logic
 
-    A motor file – movement functions and motor control.
+Round 2 builds on the same movement logic and adds a camera thread:
 
-This was better in theory, but we ran into import/module issues and it added complexity we didn’t really need.
-Final structure
+- The camera is configured with Picamera2.
+- Frames are converted from RGB to HSV.
+- Two red ranges and one green range are defined.
+- Masks are created, cleaned with morphology, and contours found.
+- When a valid contour is found, the code draws a rectangle and writes `RED` or `GREEN` on the frame.
+- The current colour seen is stored in a shared variable `current_seen`.
 
-In the end, we simplified to:
+While the camera is running, obstacle logic checks `current_seen`:
 
-    Motor logic file – Contains movement functions and the main lap/obstacle logic.
+- If it’s green, the robot follows a sequence of 45° turns and straight segments to pass the pillar on the correct side.
+- If it’s red, it uses a mirrored sequence on the other side.
 
-    Sensors file – Contains all sensor classes and functions (LiDAR, camera, gyro where used).
+We chose this approach because it is:
 
-    Single main entry function – A high-level function that starts the three-lap behaviour.
+- Lightweight compared to full object detection.
+- Easier to debug and tune.
+- Good enough for reliably spotting the red/green pillars we care about.
 
-The motor logic calls sensor functions (e.g., luna for LiDAR, camera colour detection, and gyro routines where applicable). This setup makes the code:
+### Parking behaviour
 
-    Easier to debug.
+Parking logic comes in once the three laps are done and the robot is near the parking section. With the rear TF-Luna online, the robot now has a sense of how much space is behind it.
 
-    Easier to tune (speed, stopping distance, turning angles).
+The idea is simple:
 
-    Easier to understand for someone reading the repo.
+- Use short forward and backward moves.
+- Use rear distance readings to avoid hitting the parking boundaries.
+- Stop when the car is inside the parking area.
 
-How it behaves in each round
-Round 1 – Open Challenge
+We added parking after we were confident the robot could complete laps and handle obstacles. This prevented us from having too many moving parts to debug at once.
 
-Goal: clean, repeatable laps.
+***
 
-    The robot drives a set number of laps using distance and timing.
+## 4. Systems thinking and engineering decisions
 
-    Turn and movement functions are tuned for consistency instead of maximum speed.
+A lot of our progress came from choosing what *not* to keep.
 
-    We discovered that a slower but accurate run often scores more points than a faster but unreliable one.
+Some key decisions:
 
-Round 2 – Obstacle Challenge
+- Dropping **two-hub SPIKE** because of communication delay and complexity.
+- Leaving **LEGO-only chassis** when we realised they couldn’t give the steering accuracy and durability we needed.
+- Moving to an **RC truck** with a better steering system and more room for electronics.
+- Removing **ultrasonic sensors** when resistor connections kept failing.
+- Removing the **gyro** from the final design after repeated drift and instability.
+- Raising the **camera** from the hood to the roof for a better view.
+- Cutting **speed** down to 0.2 to improve accuracy and repeatability.
 
-Goal: react correctly to red/green markers and complete laps.
+All of these were made after actual tests. In almost every case, the simpler solution was more reliable under competition conditions than the more complex one.
 
-    Camera logic runs in parallel with movement.
+***
 
-    Our colour detection code identifies red and green markers and stores the current seen colour.
+## 5. Reproducibility and GitHub quality
 
-    Movement logic then adjusts path so markers are passed on the correct side.
+We want this repo to be useful to other teams and understandable for judges. That’s why it includes:
 
-Parking
+- Code for both rounds (`round1.py`, `round2.py`) plus shared sensor logic (`sensors6.py`).
+- Wiring diagrams and GPIO tables.
+- Photos of the robot from every side and top/down.
+- A team photo.
+- An Engineering Journal describing how the robot evolved over time.
 
-Goal: finish the run with a clean park.
+### How to run the code (high level)
 
-    With the rear TF-Luna added, the robot gets better distance measurements behind it.
+On the robot:
 
-    Parking logic uses forward/back movements and distance readings to line up and stop in the parking bay.
+- Use `round1.py` when testing or running the **Open Challenge**.
+- Use `round2.py` when testing or running the **Obstacle Challenge**.
+- `sensors6.py` must be present because both rounds import LiDAR logic from it.
 
-    We tuned this after getting basic obstacle behaviour working, to avoid too many moving parts at once.
+The robot follows the required competition start procedure:
 
-Lessons we learned
+1. Place the robot in the start zone, fully off.
+2. Switch power on.
+3. Wait in a ready state.
+4. Press the start button when the judge says “Go”.
 
-From building this robot and preparing for WRO, a few lessons stood out:
+The GPIO wiring and sensor setup in this repo match that behaviour.
 
-    More hardware doesn’t automatically mean a better robot.
+***
 
-    If a sensor or library is too hard to integrate reliably, it’s often better to switch to something simpler.
+## Conclusion
 
-    How the robot looks matters, but performance and rule compliance matter more.
+Our Future Engineers robot didn’t come from a single perfect design. It came from:
 
-    Keeping code structure simple can save you in competition when time and nerves are tight.
+- Breaking LEGO robots.
+- Swapping out bodies and sensors.
+- Watching the robot fail in competition.
+- Then simplifying and tightening the design until it behaved predictably.
 
-    A robot that always finishes its run is more valuable than one that crashes trying to be fast.
-
-    Having offline access (monitor, mouse, keyboard) and a safe start button can prevent last-minute disasters.
+The biggest thing we learned is that in this category, the “best” robot isn’t the one with the most sensors or the craziest speed, it’s the one that **finishes reliably** and whose engineering can be explained clearly. That idea guided our choices in mechanics, wiring, sensors, and code, and it’s what this README is trying to share.
