@@ -61,6 +61,7 @@ To stay within the rules, we replaced it with the smaller mini-truck design used
 August: Final improvements
 During the summer holidays in August, we focused hard on both rounds. We made the Open Challenge much more accurate, and we improved the camera logic so it could react properly to both red and green obstacles.
 At that stage, we added a BNO085 gyro to make 45-degree turns more accurate in Round 2, especially for the Obstacle Challenge. We also added parking logic and tuned the code further so the robot would be more repeatable overall.
+We also tested different speeds to determine which speed gave the most accuracy, 0.5(50%) led to the robot to finish in 20 - 25 seconds, which would have given us top o10 in round 1 however it had a 5/10 chance of completing, so 50% chance to fail which was too high for us. So we lowered the speed down to 0.3 and realised it did not improve the accuracy but made the robot take 23-28 seconds and only complete 7/10. So we lowered it to 0.2 which gave us 9/10 accuracy and made it take 25-30 seconds which is worth more to us than having no points.
 By then, the biggest lessons from the last two years were clear: avoid unnecessary complexity, use vision only when it really helps, focus on repeatability instead of just raw speed and most importantly, do not touch what works
 What we learned:
 A few main lessons came out of the whole process:
