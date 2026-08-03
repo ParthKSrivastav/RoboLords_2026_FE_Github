@@ -1,27 +1,4 @@
 print("testing v4")
-import cv2
-import numpy as np
-import numpy as np
-from picamera2 import Picamera2
-import time
-import sys
-import cv2
-sys.path.insert(0,'/home/pi/bob/lib/python3.11/site-packages')
-from gpiozero import Motor, Button
-import numpy as np
-import sensors6
-import time
-from picamera2 import Picamera2
-import time
-import threading 
-from signal import pause
-import time
-import cv2
-import numpy as np
-from gpiozero import Button
-
-global obstacle
-global Scans
 #######
 import sys
 sys.path.insert(0, '/home/pi/bob/lib/python3.11/site-packages')
