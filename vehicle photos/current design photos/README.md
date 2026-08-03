@@ -8,3 +8,4 @@ The side view shows the missing door which we have done to give quick and easier
 
 Top view just shows a birds eye view of the robot.
 
+under the Body shows the wiring of the robot, all 4 cables connect to the motor controller "in" via male to female cable and a screw (which is came with the motor controller)
