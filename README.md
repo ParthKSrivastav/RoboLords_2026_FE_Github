@@ -95,7 +95,6 @@ We experimented with quite a few sensors over the season. The final set is:
 - **Raspberry Pi Camera Module 3 Wide** – Detects red and green pillars in Round 2.
 - **BNO085** - detects gyro and helps us keep the robot straight and turn accurately 
 Along the way we tried:
-
 - An **MPU6050 gyro** in the centre of the robot.
 - Side **ultrasonic sensors**.
 
@@ -108,7 +107,7 @@ Sensor placement ended up being just as important as sensor choice:
 - The **front TF-Luna** is low in the front bumper area, with LEGO pieces acting as a protective bumper so the sensor isn’t the first point of impact.
 - The **rear TF-Luna** is low at the rear bumper so it can see the parking area behind the car.
 - The **camera** started lower down near the windshield/hood for aesthetics, but the view was too limited. Moving it onto the roof gave us a much better field of view and more reliable colour detection.
-
+- The **BNO085 we have placed in the truck next to the raspberry pi for easy access
 The gyro, when we used it, was mounted close to the centre of the robot to reduce the effect of bumps. Even with that, it still wasn’t reliable enough, which is why it’s not part of the final setup.
 
 ### Wiring and GPIO map
@@ -131,7 +130,7 @@ Getting this right stopped a lot of the strange behaviour we saw in early tests.
 
 ## 3. Software architecture and obstacle strategy
 
-### How the code is organised
+### How the old was organised
 
 The software started life as “one big file that does everything”. That was okay for early experiments, but it quickly became hard to read and debug.
 
@@ -141,7 +140,7 @@ The final structure is deliberately simple:
 
 
 This way, if someone wants to understand the Open Challenge, they read `round1.py` and `sensors6.py`. If they want Obstacle Challenge and parking, they read `round2.py` and `sensors6.py`.
-
+We have changed this because the 3 code split did not work, it ended with the main and sensors6 which we did not like as it did not make it easy to debug. Our new code is much more efficient and easier to debug.
 ### Round 1 – Open Challenge logic
 
 Open Challenge starts by defining variables then subscribing to all the nodes
@@ -214,9 +213,7 @@ We want this repo to be useful to other teams and understandable for judges. Tha
 
 On the robot:
 
-- Use `round1.py` when testing or running the **Open Challenge**.
-- Use `round2.py` when testing or running the **Obstacle Challenge**.
-- `sensors6.py` must be present because both rounds import LiDAR logic from it.
+for testing we usually enable each node in different terminals, we tend to use puTTY which allows us to communicate with the robot and allows us to copy paste to and from the truck (which is more important then you think)
 
 The robot follows the required competition start procedure:
 
