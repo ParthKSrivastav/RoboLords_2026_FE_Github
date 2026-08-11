@@ -28,7 +28,8 @@ We’ve tried to organise the repo so that someone who isn’t on our team can u
 
 - `README.md` – This main overview of the robot, hardware, software, and key decisions.
 - `Engineering Journal.md` – Our journey: what we tried, what broke, and what we changed.
-- `old code' is the code that we used to use like in the uk finals and now are useless as we switched to a more advanced code
+- `old code/' is the code that we used to use like in the uk finals and now are useless as we switched to a more advanced code https://github.com/ParthKSrivastav/RoboLords_2026_FE_Github/tree/main/code/old%20code
+- 'new code/ is the code that has ROS which replaced the previous code https://github.com/ParthKSrivastav/RoboLords_2026_FE_Github/tree/main/code 
 - `schemes/` – Wiring diagrams and Raspberry Pi GPIO pin mapping.(https://github.com/ParthKSrivastav/RoboLords_2026_FE_Github/tree/main/schemes)
 - `vehicle photos/` – Photos of the robot from front, rear, side, and top.(https://github.com/ParthKSrivastav/RoboLords_2026_FE_Github/tree/main/vehicle%20photos
 - `team photo/` – Photo of the team with the robot.(https://github.com/ParthKSrivastav/RoboLords_2026_FE_Github/tree/main/team%20photo)
