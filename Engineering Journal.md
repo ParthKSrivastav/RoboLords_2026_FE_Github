@@ -48,6 +48,9 @@ June
 In June, we removed the gyro from the main turning system for the time being. At that point, motor-controller timing was giving us more repeatable results than the gyro setup we were testing, so we simplified the code and used the controller timer instead.
 
 This was not the perfect solution, but it was the most reliable one for that stage of the project. We did not give up on the gyro completely — it just was not the best option at that moment.
+In august we have overhauled our old design and went for a new structure. We installed docker and ROS onto our debian(raspberry pi software) to have a more accurate and consistent robot. We decided that our old code was getting too complicated and was going to hard to debug in the pressure of the competition. So we invested time into ROS2 which acts like a nervous system for the robot and helps us to find problems more easily (if a sensor was not working properly we can test if it is the sensor or if it s the node which can fast track debugging). Although this does go against our learning of not touching something that works and we did have thoughts this will be risky and can cause has to lose precious time but we chose it is worth the risk and went on.
+What does ROS2 actually do - it acts as a system that takes the info from the sensors and gives it to one "main" code in our case is navigation node. ROS does not do anything more than make the system, it is not a type of intelligence as we first mistaken it for. However, it is still worth if your code seems complicated.
+We also added a BNo085 gyro which has caused us problems which we talk about in https://github.com/ParthKSrivastav/RoboLords_2026_FE_Github/blob/main/code/README.md and how we solved the issue.
 Competition lessons in 2026
 Regionals
 
