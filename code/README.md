@@ -20,3 +20,42 @@ Then the code calls the navigation loop which runs all the functions to complete
 Then we have our "main" at the bottom which runs the navigation node and if we were to turn it off( using keyboard interrupt which means if we click a key it will disable the code for us) it makes sure to turn off the navigation node.
 
 
+## Final Software Architecture
+
+ROS 2 acts as the communication layer between our sensor and navigation nodes. The Raspberry Pi 4B acts as the main processing computer.
+
+The camera processing runs outside ROS because we could not reliably run the required Picamera2 libraries inside our ROS Docker environment. The Camera Receiver therefore acts as the interface between the camera system and ROS.
+
+```mermaid
+flowchart TD
+    PI["Raspberry Pi 4B<br/>BRAIN"]
+
+    subgraph DOCKER["Docker Container"]
+        ROS["ROS 2"]
+
+        FRONT["Front TF-Luna Node"]
+        REAR["Rear TF-Luna Node"]
+        IMU["BNO085 IMU Node"]
+        CAMREC["Camera Receiver"]
+        NAV["Navigation Node"]
+
+        FRONT --> NAV
+        REAR --> NAV
+        IMU --> NAV
+        CAMREC --> NAV
+    end
+
+    subgraph CAMERA["Camera Processing<br/>(Outside ROS)"]
+        PICAM["Picamera3 / Picamera2"]
+        CV["OpenCV"]
+        COLOUR["Colour Detection<br/>Red / Green"]
+        CAMPUB["Camera Publisher"]
+
+        PICAM --> CV
+        CV --> COLOUR
+        COLOUR --> CAMPUB
+    end
+
+    PI --> DOCKER
+    CAMPUB --> CAMREC
+```
