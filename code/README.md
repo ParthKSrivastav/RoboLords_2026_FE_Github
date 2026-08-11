@@ -28,7 +28,7 @@ The camera processing runs outside ROS because we could not reliably run the req
 
 ```mermaid
 flowchart TD
-    PI["Raspberry Pi 4b<br/>BRAIN"]
+    PI["Raspberry Pi 4b <br/>BRAIN"]
 
     subgraph DOCKER["Docker Container"]
         ROS["ROS 2"]
