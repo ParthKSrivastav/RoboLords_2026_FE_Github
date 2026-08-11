@@ -18,36 +18,34 @@ Then subscribes/ takes the broadcasted information ready to use to complete the 
 Then we create the functions like Colour_detection which takes the information from the camera receiver node and decides if it should turn right or turn left.
 Then the code calls the navigation loop which runs all the functions to complete everything required.
 Then we have our "main" at the bottom which runs the navigation node and if we were to turn it off( using keyboard interrupt which means if we click a key it will disable the code for us) it makes sure to turn off the navigation node.
-Diagrams:
-                    ┌─────────────────────┐
-                    │    Raspberry Pi 4B  │
-                    │       "BRAIN"       │
-                    └──────────┬──────────┘
-                               │
-                        ROS 2 / Docker
-                               │
-              ┌────────────────┼────────────────┐
-              │                │                │
-              ▼                ▼                ▼
-        Front TF-Luna     Rear TF-Luna       BNO085
-              │                │                │
-              └────────────────┼────────────────┘
-                               │
-                               ▼
-                       Navigation Node
-                               ▲
-                               │
-                         Camera Receiver
-                               ▲
-                               │
-                    Camera Publisher
-                               ▲
-                               │
-                    Picamera3 / Picamera2
-                               │
-                            OpenCV
-                               │
-                     Colour detection
-                               │
-                         Red / Green
+flowchart TD
+    PI["Raspberry Pi 4B<br/>BRAIN"]
+    ROS["ROS 2 / Docker"]
+
+    FRONT["Front TF-Luna<br/>ROS Node"]
+    REAR["Rear TF-Luna<br/>ROS Node"]
+    IMU["BNO085<br/>IMU Node"]
+
+    NAV["Navigation Node"]
+
+    CAMREC["Camera Receiver"]
+    CAMPUB["Camera Publisher"]
+    PICAM["Picamera3 / Picamera2"]
+    CV["OpenCV"]
+    COLOUR["Colour Detection<br/>Red / Green"]
+
+    PI --> ROS
+
+    ROS --> FRONT
+    ROS --> REAR
+    ROS --> IMU
+
+    FRONT --> NAV
+    REAR --> NAV
+    IMU --> NAV
+
+    COLOUR --> CAMPUB
+    PICAM --> COLOUR
+    CAMPUB --> CAMREC
+    CAMREC --> NAV
 this shows the flow state of our current code, the camera does not run inside docker so it instead runs on the native raspberry pi, while everything else runs on docker
