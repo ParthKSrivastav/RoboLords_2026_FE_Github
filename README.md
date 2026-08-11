@@ -9,6 +9,7 @@ Our final robot uses:
 - A Raspberry Pi 4B as the “brain”.
 - Two TF-Luna LiDAR sensors for distance.
 - A Raspberry Pi Camera Module 3 Wide for colour detection.
+- A BNO085 to give us the angle of the robot 
 - A modified RC truck chassis with steering and drive controlled through a motor controller.
 
 Over the season we discovered something important: a robot that finishes cleanly every time is worth more than one that’s only fast when everything goes perfectly. Most of our design decisions are about making it reliable, understandable, and reproducible under competition pressure.
@@ -92,14 +93,14 @@ We experimented with quite a few sensors over the season. The final set is:
 - **Front TF-Luna LiDAR** – Measures distance ahead and helps to avoid walls.
 - **Rear TF-Luna LiDAR** – Added later for better awareness when parking.
 - **Raspberry Pi Camera Module 3 Wide** – Detects red and green pillars in Round 2.
-
+- **BNO085** - detects gyro and helps us keep the robot straight and turn accurately 
 Along the way we tried:
 
 - An **MPU6050 gyro** in the centre of the robot.
 - Side **ultrasonic sensors**.
 
 The gyro looked promising, and we tried Kalman filters and PID tuning, but in real runs it kept drifting and gave inconsistent angles. The ultrasonic sensors suffered from loose resistors and unreliable readings, especially when transported and plugged in repeatedly. In the end both were removed from the final design. That was one of the big lessons: if a sensor can’t be trusted in competition conditions, it’s better to remove it than to keep fighting it.
-
+In the end we did use a gyro we changed it to the BNO085 which is more accurate( and more expensive) but it seemed to keep disconnecting, which we overcame by resetting it whenever the code detected a crash we talked more about this in https://github.com/ParthKSrivastav/RoboLords_2026_FE_Github/blob/main/code/README.md
 ### Where we put everything
 
 Sensor placement ended up being just as important as sensor choice:
@@ -138,46 +139,29 @@ We tried a three-file split (main / sensors / motor), but that introduced some i
 
 The final structure is deliberately simple:
 
-- `round1.py` – Open Challenge behaviour (three laps).
-- `round2.py` – Obstacle Challenge behaviour (red/green pillars + parking).
-- `sensors6.py` – Shared sensor classes and helper functions for LiDAR.
 
 This way, if someone wants to understand the Open Challenge, they read `round1.py` and `sensors6.py`. If they want Obstacle Challenge and parking, they read `round2.py` and `sensors6.py`.
 
 ### Round 1 – Open Challenge logic
 
-Open Challenge starts by importing sensor support from `sensors6.py`. The core of the program is the `Robot` class, which contains:
-
-- `drive_forward`, `move_forward`, `turn_left`, `turn_right`, `stop` and steering-correction functions.
-- `luna_turn`, our turning system, which uses timed movement plus LiDAR checking to make turns more consistent.
+Open Challenge starts by defining variables then subscribing to all the nodes
 
 On top of that, there’s a lap routine:
 
 - Move forward a set distance.
-- Turn 90 degrees using `luna_turn`.
+- Turn 90 degrees using `turn_logic`.
 - Repeat this four times for one lap.
 - Repeat laps until three are completed.
-
-We also use a basic **“coin flip”** idea that turns the robot and checks for walls. If it sees a wall, it chooses the other direction. If it doesn’t, it carries on. This is a simple way to adapt to track layout without hardcoding positions.
 
 One of the biggest improvements came from reducing speed. At high speed we finished a run much faster, but the robot was inconsistent and hard to reproduce. Slowing down and accepting a slightly longer run gave us much cleaner three-lap behaviour.
 
 ### Round 2 – Obstacle Challenge logic
 
 Round 2 builds on the same movement logic and adds a camera thread:
-
-- The camera is configured with Picamera2.
-- Frames are converted from RGB to HSV.
-- Two red ranges and one green range are defined.
-- Masks are created, cleaned with morphology, and contours found.
-- When a valid contour is found, the code draws a rectangle and writes `RED` or `GREEN` on the frame.
-- The current colour seen is stored in a shared variable `current_seen`.
-
-While the camera is running, obstacle logic checks `current_seen`:
-
-- If it’s green, the robot follows a sequence of 45° turns and straight segments to pass the pillar on the correct side.
-- If it’s red, it uses a mirrored sequence on the other side.
-
+- the camera is configured outside of ROS
+- it uses CV2 to confirm which colour
+- it then sends the data (GREEN - True/False , RED - True/False, GREEN_X - where is the green, RED_X - where is the red) using TCP communication
+- node instead ROS takes the values and broadcasts them again to the navigation node
 We chose this approach because it is:
 
 - Lightweight compared to full object detection.
