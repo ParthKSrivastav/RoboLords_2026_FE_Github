@@ -58,6 +58,7 @@ At regionals, we won, but we had one major issue: the robot would not connect pr
 
 To prevent that happening again, we started bringing extra equipment to competitions, including a monitor, mouse, and keyboard. We also connected a physical button-based startup system so the robot could be started safely and edited locally without needing internet access.
 This did not make the robot faster, but it made the whole system much more reliable and competition-ready.
+
 Finals
 At finals, we won again, but we also came very close to being disqualified because our truck had one more axle than the rules allowed. It was originally based on a six-wheeled RC truck that we had tuned heavily.
 To stay within the rules, we replaced it with the smaller mini-truck design used in Mark 11 and Mark 12. That taught us an important lesson: even when a robot performs well, it still has to stay legal.
