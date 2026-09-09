@@ -1,0 +1,72 @@
+this contains our testing information (what each test we did, results and possible reasons that we think was causing the issue).
+we have done this to make it easier for upcoming teams to learn how to debug and what process we used to get more accurate.
+1st test
+Messed up on fourth turn ( seems to have seen something too soon) 
+Increase power
+Gyro crashed due to over load. 
+2nd test 
+Third turn messed up ( could be due to the previous overload which seemed to be from 2 commands at the same time. Robot jerked the wheels) 
+3rd test
+Messed up fourth turn( I have readjusted the lidar to ensure it is not seeing the floor and is seeing the wall 
+4th test
+2 and half laps. Second turn gyro restarts and instantly starts turning even though it's not in the right spot
+7th turn the robot seems to seeing something even though there was nothing there 
+5th test robot does first lap perfectly then starts over turning from second lap, 9th turn it nearly went 180 degrees
+
+
+------+-+--Turns----------all from same position 
+Test 1 
+Overshot slightly could recover  (106 in terminal seems accurate)
+Test 2 changed turn to 80
+Perfect
+Test 3 
+ slightly off (93 in terminal) robot was around there at most 100
+Test 4 
+Slightly off did not turn enough could recover (85 instead of 90)
+Test 5 
+Slightly off 85 in terminal and is actually 95ish could recover
+Test6 from test 5 
+was perfect 
+Test 7 
+Turn was perfect, node firstly saw 86 then shot to 126 although the truck was not moving 
+Test 8 
+Overshot by 45 degrees, gyro restarted twice first time was 32 degrees which was accurate enough then second time was 2 degrees which causes it to overshot 
+Turn 9
+Slightly under terminal saw 82 realistically 85 but could recover 
+Turn 10 
+Pretty much perfect (around 88) but terminal thinks 82 
+--------------Half a lap test--------------
+Test 1 
+Perfect( forward, turns, forward and turns perfectly no issue) however it has not counted a turn
+Test 2
+Perfect like test 1 
+Test 3 switched position to the other side (usually where the robot messes up in normal 3 lap) 
+Perfect 
+Test 4
+Does first turn perfect goes straight has a gyro restart and then turns right after which messed up the run 
+Test 5
+First turn, second turn messed up ( could be overheating tf luna is reporting 50 degrees)
+Test 6 has the same problem has test 4,5 it seems to overshoot only there 
+Test 7 on the same side as test 3
+Perfect
+Test 8 
+Messed up due to gyro restart instantly choice to turn but did do 2 laps and seems to do more than one turns even though it was not 75 cm ( failed the half lap but a lap 
+Test 9
+Turns perfect first, straight was a bit off and did 2 turns 
+Test 10 did the same thing as test 9 but it they seem to be able to correct itself and go back on course. I think the lidar point in the turning code needs to be adjusted then it will work  
+Turn and one straight
+Test 1 ( turn only) 
+Perfect
+Test 2 ( turn only) 
+Slightly off (5 degrees)
+Test 3 reduced to 70
+Perfect
+Test 4 added straight logic 
+Perfect
+Test 5 
+Slightly odd ( 5 degrees) but it could continue 
+Test 6 ( stop logic) 
+Perfect
+Test 7 
+Perfect
+keeping in mind this only a few of the runs we did in reality we do hundreds of runs but not all were documented 
